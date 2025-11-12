@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" name="viewport"  content="width=device-width, initial-scale=1.0">
+  <title>AC Control Panel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff, #ff6a00, #ee0979);
+      background-size: 400% 900%;
+      animation: gradientBG 55s ease infinite;
+      color: white;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {baddckground-position: 0% 50%;}
+
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 60px;
+    }
+
+    button {
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 80px;
+      border-radius: 5px;
+      border: none;
+      margin-right: 10px;
+    }
+    .dropdown {
+	    position:relative;
+	    display:inline-block;
+    }
+    
+    .dropbtn {
+	
+  	color: white;
+  	padding: 16px;
+  	font-size: 16px;
+  	border: none;
+  	cursor: pointer;
+	}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.footer {
+	text-align : start;
+	min-width : 400px;
+	padding:10px;
+
+}  
+
+.hidden {
+	display: none;
+}
+    .dropdown-content:hover {}
+    .dropdown:hover .dropdown-content{display:block;}
+    .dropdown:hover .dropbtn {background-color:#3e8e41;}
+
+  </style>
+</head>
+<body>
+  <h1>🌬️Climate Control</h1>
+  <div id ="temp"> Temperatura:{{temp}}°C</div>
+  <div id="hum">Umiditate:{{hum}}%</div>
+  <input type="number" id="temp_val" value="19" min="15" max="30" step="1">
+  <button onclick = "settemp()" style="padding:10px 20px;">Set</button>
+  <hr>
+  <div class="dropdown" style="float:left;">
+  <button id= "rece" class="dropbtn" >Cool </button>
+  <div class="dropdown-content" style="left:0;">
+	  <button onclick="tra('cool_on')">ON</button>
+	  <button onclick="tra('cool_off')">OFF</button>
+  </div>
+  </div>
+  
+  <button id="term" style="float:center; padding:10px 10px;" onclick="termSelect()"> AC </button>
+
+  <div class="dropdown" style="float:right;">
+  <button class = "dropbtn">Heat </button>
+  <div class= "dropdown-content" style="right:0;">
+	  <button onclick="tra('heat_on')">ON</button>
+	  <button onclick="tra('heat_off')">OFF</button>
+  </div>
+  </div>
+  <p style= "padding-top:130px;" id ="response"></p>
+  <div style= "margin-bottom:5px; padding-top:10px;" id="temp_out"><hr> Conditii atmosferice Bucuresti Filaret</div>
+  <p>Temperatura:{{temp_out}}°C</p>
+  <p>Umiditate:{{hum_out}}%</p>
+  <p>Nebulozitate:{{cer_out}}</p>
+  <p>Presiune:{{pres_out}}</p>
+
+  <script>
+    function tra(val) {
+		      fetch('/ac', {method:'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({val: val})})
+      .then(response => response.text())
+      .then(data => console.log("bumm"));
+	      }
+    function settemp (){
+		      const val_t = document.getElementById('temp_val').value;
+		      fetch('/settemp',{method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({temp_val:val_t})})
+      .then(response=>response.json())
+			      .then (data=>{document.getElementById('response').innerText = data.message});
+	}
+
+    function setTemperature() {
+      const temp = document.getElementById('temp').value;
+      fetch(`/ac-control?command=set_temp&value=${temp}`, {
+        method: 'GET'
+      })
+      .then(response => response.text())
+      .then(data => alert(`Temperature set to ${temp}°C\nResponse: ${data}`))
+      .catch(error => alert('Error setting temperature: ' + error));
+    }
+
+    function autorefresh(){
+		    window.location = window.location.href;
+    }
+    //setInterval('autorefresh()', 60000);
+    
+    let index=0;
+    function termSelect(){
+     let var3 = 0;
+     let names = ["AC", "CT"];
+     index = (index +1)%names.length;
+     document.getElementById("term").textContent = names[index];
+     if (names[index]=='CT')
+     {
+	document.getElementById("rece").classList.add('hidden');
+     }
+     else
+     {
+      document.getElementById("rece").classList.remove('hidden');
+     }
+
+      fetch('/setMode', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mode_Type:names[index]})})
+			      .then(response =>response.text())
+			      .then(data => console.log(names[index]));
+    }
+    document.addEventListener("DOMContentLoaded", async()=> {
+    await  fetch('/get-data')
+    .then(response => response.json())
+    .then(data => {document.getElementById('temp_val').value = data.setTemp;
+		   document.getElementById("term").textContent = data.setMode;
+		      console.log(data.setMode);});
+    
+        const state = document.getElementById('term');
+		      console.log(state.textContent)
+	
+		      if(state.textContent.trim() === 'CT'){		      
+					document.getElementById("rece").classList.add('hidden');
+				}
+		      else{
+					document.getElementById("rece").classList.remove('hidden');
+				}
+	    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AC Control Panel</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff, #ff6a00, #ee0979);
+      background-size: 700% 900%;
+      animation: gradientBG 55s ease infinite;
+      color: white;
+    }
+
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 80px;
+      border-radius: 5px;
+      border: none;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Climate controll <br></br> Bucuresti Drumul Binelui 248C	</h1>
+  <form class == "grid" action = "/login" method = "POST">
+  <label  for = "Password"> Enter your password: </label>
+  <br></br>
+  <input type = "text" name = "pass" id ="pass">
+  <br></br>
+  <button type="submit"> Log In </button>
+  </form>
+
+
+</body>
+</html>
