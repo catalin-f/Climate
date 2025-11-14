@@ -4,6 +4,7 @@ from flask_login  import LoginManager, UserMixin,login_user,login_required, curr
 import os
 import time
 import json
+import paho.mqtt.publish as pub
 
 app = Flask(__name__)
 app.secret_key ='Binelui'
@@ -104,6 +105,7 @@ def setMode():
 
 @app.route('/ac/', methods = ['POST'])
 def ac_control():
+    json_data=0
     data = request.get_json()
     val = data.get('val')
     if val == 'cool_on':
@@ -113,10 +115,28 @@ def ac_control():
         os.system('irsend SEND_ONCE MY_AC COLD_OFF_18')
         print(val)
     if val  == 'heat_on':
-        os.system('irsend SEND_ONCE MY_AC HEAT_ON_23')
+        with open("/home/pi/work/centrala/temp.json" ,"r") as f:
+         json_data=json.load(f)
+        if len(json_data):
+            if json_data["modeType"] == "CT":
+                json_data["heat"]= "on"
+                with open("/home/pi/work/centrala/temp.json","w") as f:
+                    json.dump(json_data,f)
+                    pub.single("eu/releu", "ON", hostname="localhost", port=1883)
+            else:        
+                os.system('irsend SEND_ONCE MY_AC HEAT_ON_23')
         print(val)
     if val == 'heat_off':
-        os.system('irsend SEND_ONCE MY_AC HEAT_OFF_23')
+        with open ("/home/pi/work/centrala/temp.json","r") as f:
+            json_data = json.load(f)
+        if len(json_data):
+            if json_data["modeType"] == "CT":
+                json_data["heat"] = "off"
+                with open ("/home/pi/work/centrala/temp.json","w") as f:
+                    json.dump(json_data, f)
+                    pub.single("eu/releu","OFF", hostname="localhost", port=1883)
+            else:
+                os.system('irsend SEND_ONCE MY_AC HEAT_OFF_23')
         print(val)
     return jsonify({'message' : f"ac command'{val}' sent."})
 
