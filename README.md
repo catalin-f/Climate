@@ -1,6 +1,6 @@
 python flask backend implemenation for climate  control AC and CT
 <img width="1843" height="862" alt="image" src="https://github.com/user-attachments/assets/8ca427fc-bad9-4c28-8dcf-032732fd927f" />
-Python scriota are set to be run automatically at bootup. Sercices can be checked by running:
+Python scripts are set to be run automatically at bootup. Sercices can be checked by running:
 sudo systemctl status climate.service
 sudo systemctl status temp.service
 
