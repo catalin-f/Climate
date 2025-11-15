@@ -1,0 +1,13 @@
+[Unit]
+Description= Read DHt22 temperature and control the heater based on the user temperature setting and sensor temperature
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/work/centrala
+ExecStartPre=/bin/sleep 30
+ExecStart=python3 getTemp.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

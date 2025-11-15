@@ -122,7 +122,8 @@ def ac_control():
                 json_data["heat"]= "on"
                 with open("/home/pi/work/centrala/temp.json","w") as f:
                     json.dump(json_data,f)
-                    pub.single("eu/releu", "ON", hostname="localhost", port=1883)
+                    #relay is connected in the opposite way
+                    pub.single("eu/releu", "OFF", hostname="localhost", port=1883)
             else:        
                 os.system('irsend SEND_ONCE MY_AC HEAT_ON_23')
         print(val)
@@ -134,7 +135,8 @@ def ac_control():
                 json_data["heat"] = "off"
                 with open ("/home/pi/work/centrala/temp.json","w") as f:
                     json.dump(json_data, f)
-                    pub.single("eu/releu","OFF", hostname="localhost", port=1883)
+                    #relay connected in the opposite way
+                    pub.single("eu/releu","ON", hostname="localhost", port=1883)
             else:
                 os.system('irsend SEND_ONCE MY_AC HEAT_OFF_23')
         print(val)

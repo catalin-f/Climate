@@ -1,0 +1,12 @@
+[Unit]
+Description= Web page climate control 
+After=network.target
+
+[Service]
+User=pi
+WorkingDirectory=/var/www/ac_site
+ExecStart=python3 ac_command.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -17,7 +17,8 @@ def heat_stop(state, temp_val, temp_set):
     print(state, temp_val, temp_set)
     if (state =="on"):
         if temp_val > (temp_set +1):
-            pub.single("eu/releu", "OFF", hostname="localhost", port = 1883)
+            #relay connected in the opposote way
+            pub.single("eu/releu", "ON", hostname="localhost", port = 1883)
 
 
 def get_anm(oras):
